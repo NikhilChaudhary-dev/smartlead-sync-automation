@@ -1,0 +1,23 @@
+name: Smartlead Auto Sync
+
+on:
+  schedule:
+    # IST 9 AM, 3 PM, 9 PM, 3 AM (UTC 3:30, 9:30, 15:30, 21:30)
+    - cron: '30 3,9,15,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Dependencies
+        run: pip install requests gspread oauth2client
+      - name: Run Script
+        env:
+          SMARTLEAD_API_KEY: ${{ secrets.SMARTLEAD_API_KEY }}
+          GOOGLE_SHEETS_JSON: ${{ secrets.GOOGLE_SHEETS_JSON }}
+        run: python smart.py
